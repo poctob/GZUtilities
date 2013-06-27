@@ -36,7 +36,6 @@ public class CryptoUtils {
 		   	     	hexString.append(hex);
 		    	}
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -52,8 +51,15 @@ public class CryptoUtils {
 	 */
 	public static String generateRandomSalt(int bits, int radix)
 	{
-		SecureRandom random = new SecureRandom();
-		return new BigInteger(bits, random).toString(radix);
+		if(bits>0 && radix>0)
+		{
+			SecureRandom random = new SecureRandom();
+			return new BigInteger(bits, random).toString(radix);
+		}
+		else
+		{
+			return null;
+		}
 	}
 	
 	/**
@@ -63,7 +69,7 @@ public class CryptoUtils {
 	 * @param hash Hashed value for comparison.
 	 * @return True if passwords match. False otherwise.
 	 */
-	public boolean checkPassSHA512(String password, String salt, String hash)
+	public static boolean checkPassSHA512(String password, String salt, String hash)
 	{
 		String hashedpass=hashPasswordSHA512(password, salt);
 		return hashedpass.equals(hash);

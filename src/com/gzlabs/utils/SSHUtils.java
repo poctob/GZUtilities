@@ -43,79 +43,83 @@ public class SSHUtils {
 			String hostname, 
 			int port, 
 			String password) {
-		Session session=connect(username, hostname, port, password);
-		if (session!=null) {
-			FileInputStream fis=null;
-			try {
-				boolean ptimestamp = true;
-				String command = "scp " + (ptimestamp ? "-p" : "") + " -t "
-						+ destination;
-				Channel channel = session.openChannel("exec");
-				((ChannelExec) channel).setCommand(command);
-
-				// get I/O streams for remote scp
-				OutputStream out = channel.getOutputStream();
-				InputStream in = channel.getInputStream();
-
-				channel.connect();
-				if (checkAck(in) != 0) {
-					return false;
+		
+		if(source !=null && (new File(source).isFile()) && destination!=null &&
+				username != null && hostname!=null && port>0 && password!=null)
+		{
+			Session session=connect(username, hostname, port, password);
+			if (session!=null) {
+				FileInputStream fis=null;
+				try {
+					boolean ptimestamp = true;
+					String command = "scp " + (ptimestamp ? "-p" : "") + " -t "
+							+ destination;
+					Channel channel = session.openChannel("exec");
+					((ChannelExec) channel).setCommand(command);
+	
+					// get I/O streams for remote scp
+					OutputStream out = channel.getOutputStream();
+					InputStream in = channel.getInputStream();
+	
+					channel.connect();
+					if (checkAck(in) != 0) {
+						return false;
+					}
+	
+					File _lfile = new File(source);
+	
+					out.write(getFileModCommandString(_lfile).getBytes());
+					out.flush();
+					if (checkAck(in) != 0) {
+						return false;
+					}
+	
+					out.write(getFileSendCommandString(_lfile, source).getBytes());
+					out.flush();
+					if (checkAck(in) != 0) {
+						return false;
+					}
+	
+					fis = new FileInputStream(source);
+					byte[] buf = new byte[1024];
+					while (true) {
+						int len = fis.read(buf, 0, buf.length);
+						if (len <= 0)
+							break;
+						out.write(buf, 0, len); // out.flush();
+					}
+					fis.close();
+					fis = null;
+					// send '\0'
+					buf[0] = 0;
+					out.write(buf, 0, 1);
+					out.flush();
+					if (checkAck(in) != 0) {
+						return false;
+					}
+					out.close();
+	
+					channel.disconnect();
+					session.disconnect();
+					System.out.println("File Sent!");
+					return true;
+	
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-
-				File _lfile = new File(source);
-
-				out.write(getFileModCommandString(_lfile).getBytes());
-				out.flush();
-				if (checkAck(in) != 0) {
-					return false;
-				}
-
-				out.write(getFileSendCommandString(_lfile, source).getBytes());
-				out.flush();
-				if (checkAck(in) != 0) {
-					return false;
-				}
-
-				fis = new FileInputStream(source);
-				byte[] buf = new byte[1024];
-				while (true) {
-					int len = fis.read(buf, 0, buf.length);
-					if (len <= 0)
-						break;
-					out.write(buf, 0, len); // out.flush();
-				}
-				fis.close();
-				fis = null;
-				// send '\0'
-				buf[0] = 0;
-				out.write(buf, 0, 1);
-				out.flush();
-				if (checkAck(in) != 0) {
-					return false;
-				}
-				out.close();
-
-				channel.disconnect();
-				session.disconnect();
-				System.out.println("File Sent!");
-				return true;
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			finally
-			{
-				if(fis!=null)
+				finally
 				{
-					try {
-						fis.close();
-					} catch (IOException e) {
-						e.printStackTrace();
+					if(fis!=null)
+					{
+						try {
+							fis.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}
 		}
-
 		return false;
 	}
 

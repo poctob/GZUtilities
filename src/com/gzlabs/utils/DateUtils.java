@@ -17,24 +17,6 @@ import org.eclipse.swt.widgets.DateTime;
 public class DateUtils {
 	
 	/**
-	 * Gets a date for the supplied weekday.
-	 * @param weekday A day to get a day of the week for
-	 * @return A string containing month and a day.
-	 */
-	public static String getWeekDayDate(int weekday)
-	{
-		Calendar cal=new GregorianCalendar();
-		cal.setTime(new Date());
-		int dofw=cal.get(Calendar.DAY_OF_WEEK);
-		int daydiff=weekday-dofw;
-		
-		cal.add(Calendar.DAY_OF_MONTH, daydiff);
-		
-		String retval=cal.get(Calendar.MONTH)+"/"+cal.get(Calendar.DATE);
-		return retval;
-	}
-	
-	/**
 	 * Gets a date from the supplied widget.
 	 * @param date Date widget
 	 * @param time Time widget (optional)
@@ -64,7 +46,7 @@ public class DateUtils {
 	 * @param time Time widget (optional)
 	 * @return Calendar date/time representation.
 	 */
-	public static Calendar calendarFromWidget(DateTime date, DateTime time)
+	public static Calendar calendarFromWidget(final DateTime date, final DateTime time)
 	{
 		Calendar cal=new GregorianCalendar();
 		if(date!=null)
@@ -76,7 +58,7 @@ public class DateUtils {
 		
 		if(time!=null)
 		{
-			cal.set(Calendar.HOUR, time.getHours());
+			cal.set(Calendar.HOUR_OF_DAY, time.getHours());
 			cal.set(Calendar.MINUTE, time.getMinutes());
 			cal.set(Calendar.SECOND, time.getSeconds());
 		}
@@ -129,6 +111,10 @@ public class DateUtils {
 	 */
 	public static Calendar calendarFromString(String time)
 	{
+		if(time==null)
+		{
+			return null;
+		}
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 		Calendar retval=new GregorianCalendar();
 		try {
@@ -219,7 +205,7 @@ public class DateUtils {
 	 * Compares two dates
 	 * @param start First date
 	 * @param end Second date	
-	 * @return 0 if dates are equal, -1 if first date is after the second on, 1 if second date is afer the first
+	 * @return 0 if dates are equal, -1 if first date is after the second on, 1 if second date is after the first
 	 */
 	public static int compareToWidget(DateTime start, DateTime end)
 	{
@@ -266,13 +252,15 @@ public class DateUtils {
 	 */	
 	public static Calendar getWeekEnd(boolean startSunday, Calendar date)
 	{
-		if(date!=null)
+		if(date==null)
 		{
-			Calendar start=getWeekStart(startSunday, date);
-			start.add(Calendar.DAY_OF_MONTH, 6);
-			return start;
+			date=new GregorianCalendar();
+			date.setTime(new Date());
 		}
-		return null;
+		Calendar end=getWeekStart(startSunday, date);
+		end.add(Calendar.DAY_OF_MONTH, 6);
+		return end;
+
 	}
 	
 	/**
@@ -408,19 +396,23 @@ public class DateUtils {
 		
 		Calendar start_cal=new GregorianCalendar();
 		start_cal.setTime(start);
+		start_cal.set(Calendar.MILLISECOND, 0);
 		
 		Calendar end_cal=new GregorianCalendar();
 		end_cal.setTime(end);
+		end_cal.set(Calendar.MILLISECOND, 0);
 		
 		if(start2!=null)
 		{
 			Calendar time_cal1=DateUtils.calendarFromString(start2);
+			time_cal1.set(Calendar.MILLISECOND, 0);
 			b1=isCalendarBetween(start_cal, end_cal, time_cal1, b);
 		}
 		
 		if(end2!=null)
 		{
 			Calendar time_cal2=DateUtils.calendarFromString(end2);
+			time_cal2.set(Calendar.MILLISECOND, 0);
 			b2=isCalendarBetween(start_cal, end_cal, time_cal2, b);
 		}
 		return   b1 || b2;
@@ -472,7 +464,7 @@ public class DateUtils {
 		int start_time=safeParseInt(start);
 		int end_time=safeParseInt(end);
 		int interval=safeParseInt(inter);
-		if(start_time<end_time)
+		if(start_time<end_time && interval>0)
 		{			
 			Calendar cal=new GregorianCalendar();
 			cal.setTime(new Date());
@@ -480,12 +472,14 @@ public class DateUtils {
 			cal.set(Calendar.MINUTE, 0);
 			retval.add(cal.get(Calendar.HOUR_OF_DAY)+":00");
 			String zminute="00";
+			int hofd=cal.get(Calendar.HOUR_OF_DAY);
 			
-			while(cal.get(Calendar.HOUR_OF_DAY)<end_time)
+			while(hofd<end_time)
 			{
 				cal.add(Calendar.MINUTE,interval);
 				
 				retval.add(cal.get(Calendar.HOUR_OF_DAY)+":"+(cal.get(Calendar.MINUTE)==0?zminute:cal.get(Calendar.MINUTE)));
+				hofd=cal.get(Calendar.HOUR_OF_DAY);
 			}
 		}
 		return retval;

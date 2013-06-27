@@ -110,9 +110,13 @@ public class ICalUtils {
 	public static VEvent createEvent(java.util.Calendar start, java.util.Calendar end,
 			String title, String location) {
 
+		if(start == null || end == null)
+		{
+			return null;
+		}
 		// copy the parameters for local operations
 		java.util.Calendar l_start = start;
-		java.util.Calendar l_end = end;
+		java.util.Calendar l_end = end;			
 
 		int endint = l_end.get(java.util.Calendar.HOUR);
 		if (endint == 0) {
@@ -145,12 +149,6 @@ public class ICalUtils {
 			e.printStackTrace();
 		}
 
-	/*	if (combine) {
-			VEvent dup = isDuplicate(event, events);
-			return dup == null ? event : dup;
-		} else {
-			return event;
-		}*/
 		return event;
 	}
 
@@ -214,7 +212,7 @@ public class ICalUtils {
 	 *            path to file.
 	 */
 	public static void saveCalendar(String filename, Calendar calendar) {
-		if (calendar != null) {
+		if (calendar != null && filename!=null) {
 			FileOutputStream fout = null;
 			try {
 				fout = new FileOutputStream(filename);
