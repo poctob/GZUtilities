@@ -141,5 +141,27 @@ public class WidgetUtilities {
 			obj.select(obj.indexOf(value));
 		}
 	}
+	
+	/**
+	 * Safe string replacement method
+	 * @param str Source string
+	 * @param what Replace what?
+	 * @param withwhat Replace with what?
+	 * @return String with replaced characters.
+	 */
+	public static String safeStringReplace(String str, String what, String withwhat)
+	{
+		String retstr="";
+		if(str!=null)
+		{
+			retstr=str;
+			if(what!=null && withwhat!=null)
+			{
+				retstr=retstr.replace(what, withwhat);
+			}
+		}
+		return retstr;
+		
+	}
 
 }
