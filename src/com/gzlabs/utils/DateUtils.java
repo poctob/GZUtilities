@@ -382,7 +382,7 @@ public class DateUtils {
 	 * @param end End of the period.
 	 * @param start2 First Date that is being checked.
 	 * @param end2 Second Date that is being checked.
-	 * @param inclusive Whether start and end dates will be included.
+	 * @param b Whether start and end dates will be included.
 	 * @return True if the date is within the period false otherwise.
 	 */
 	public static boolean isCalendarBetween(Date start, Date end,

@@ -131,10 +131,10 @@ public class WidgetUtilities {
 	/**
 	 * Wrapper to perform safe selection of the items in a combo
 	 * 
-	 * @param s
-	 *            Item to select
-	 * @param c
-	 *            Combo to use
+	 * @param obj
+	 *           Combo to use
+	 * @param value
+	 *             Item to select
 	 */
 	public static void safeComboSelect(Combo obj, String value) {
 		if (obj != null && value != null) {

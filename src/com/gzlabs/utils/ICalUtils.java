@@ -104,8 +104,6 @@ public class ICalUtils {
 	 *            Title of the event.
 	 * @param location
 	 *            Location of the event.
-	 * @param combine
-	 *            Whether to combine daily duplicates
 	 */
 	public static VEvent createEvent(java.util.Calendar start, java.util.Calendar end,
 			String title, String location) {
