@@ -457,10 +457,10 @@ public class DateUtils {
 	 * @param inter Interval
 	 * @return List of string with time periods.
 	 */
-	public static ArrayList<String> getTimeSpan(String start, String end, String inter)
+	public static ArrayList<Object> getTimeSpan(String start, String end, String inter)
 	{
 		
-		ArrayList<String> retval=new ArrayList<String> ();
+		ArrayList<Object> retval=new ArrayList<Object> ();
 		int start_time=safeParseInt(start);
 		int end_time=safeParseInt(end);
 		int interval=safeParseInt(inter);

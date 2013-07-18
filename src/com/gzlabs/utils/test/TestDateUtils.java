@@ -364,7 +364,7 @@ public class TestDateUtils {
 	@Test
 	public void testGetTimeSpan() {
 		
-		ArrayList<String> retval=DateUtils.getTimeSpan(null, null, null);
+		ArrayList<Object> retval=DateUtils.getTimeSpan(null, null, null);
 		assertEquals("Span length should be 0", 0, retval.size());
 		
 		retval=DateUtils.getTimeSpan("8", null, null);
