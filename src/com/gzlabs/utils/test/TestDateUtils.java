@@ -330,8 +330,7 @@ public class TestDateUtils {
 		assertTrue("Calendar should be in between", DateUtils.isCalendarBetween(start, end, null, date2,true));
 		
 		assertFalse("Calendar should be in between", DateUtils.isCalendarBetween(null, end, date1, date2,true));
-		assertFalse("Calendar should be in between", DateUtils.isCalendarBetween(start, null, date1, date2,true));
-		assertFalse("Calendar should be in between", DateUtils.isCalendarBetween(null, null, date1, date2,true));
+		assertFalse("Calendar should be in between", DateUtils.isCalendarBetween(start, null, date1, date2,true));	
 		
 		assertFalse("Calendar should be in between", DateUtils.isCalendarBetween(start, end, date1, date2,false));
 		assertFalse("Calendar should be in between", DateUtils.isCalendarBetween(start, end, date1, null,false));

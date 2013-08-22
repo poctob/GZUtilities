@@ -183,6 +183,20 @@ public class DateUtils {
 		Calendar start_cal=DateUtils.calendarFromString(start);
 		Calendar end_cal=DateUtils.calendarFromString(end);
 		
+		return getSpanMinutes(start_cal, end_cal);
+	}
+	
+	/**
+	 * Returns a difference between two dates in minutes	
+	 * @param start First date
+	 * @param end Second date
+	 * @return Difference between two dates
+	 */
+	public static double getSpanMinutes(final Calendar start, final Calendar end)
+	{
+		Calendar start_cal=start;
+		Calendar end_cal=end;
+		
 		if(start_cal == null || end_cal ==null)
 		{
 			return 0;
@@ -361,14 +375,30 @@ public class DateUtils {
 		if(date!=null)
 		{
 			Calendar cal=new GregorianCalendar();
-			cal.setTime(date);
-			String retsring=String.format("%02d", cal.get(Calendar.YEAR))+"-";
+			cal.setTime(date);			
+			return CalendarToString(cal);
+		}
+		return null;
 		
-			retsring+=safeStringFormat(cal.get(Calendar.MONTH)+1)+"-";
-			retsring+=safeStringFormat(cal.get(Calendar.DAY_OF_MONTH))+" ";
-			retsring+=safeStringFormat( cal.get(Calendar.HOUR_OF_DAY))+":";
-			retsring+=safeStringFormat(cal.get(Calendar.MINUTE))+":";
-			retsring+=safeStringFormat(cal.get(Calendar.SECOND))+".0"	;
+	}
+	
+	/**
+	 * Converts java.util.Calendar to SQL formatted string
+	 * @param date Date to convert.
+	 * @return SQL formatted string.
+	 */
+	public static String CalendarToString(Calendar date)
+	{
+		if(date!=null)
+		{
+	
+			String retsring=String.format("%02d", date.get(Calendar.YEAR))+"-";
+		
+			retsring+=safeStringFormat(date.get(Calendar.MONTH)+1)+"-";
+			retsring+=safeStringFormat(date.get(Calendar.DAY_OF_MONTH))+" ";
+			retsring+=safeStringFormat(date.get(Calendar.HOUR_OF_DAY))+":";
+			retsring+=safeStringFormat(date.get(Calendar.MINUTE))+":";
+			retsring+=safeStringFormat(date.get(Calendar.SECOND))+".0"	;
 			return retsring;
 		}
 		return null;
@@ -390,16 +420,39 @@ public class DateUtils {
 		if(start == null || end ==null)
 		{
 			return false;
+		}		
+		Calendar start_cal=new GregorianCalendar();
+		start_cal.setTime(start);
+		
+		Calendar end_cal=new GregorianCalendar();
+		end_cal.setTime(end);
+
+		return isCalendarBetween(start_cal, end_cal, start2, end2, b);
+	}
+	
+	/**
+	 * Convenience method, uses calendar representation to check if it falls within specified period.
+	 * Works for two dates at a time.  Set the second one to null if not needed.
+	 * @param start Start of the period.
+	 * @param end End of the period.
+	 * @param start2 First Date that is being checked.
+	 * @param end2 Second Date that is being checked.
+	 * @param b Whether start and end dates will be included.
+	 * @return True if the date is within the period false otherwise.
+	 */
+	public static boolean isCalendarBetween(final Calendar start, final Calendar end,
+			String start2, String end2, boolean b) {
+		if(start == null || end ==null)
+		{
+			return false;
 		}
 		boolean b1=false;
 		boolean b2=false;
 		
-		Calendar start_cal=new GregorianCalendar();
-		start_cal.setTime(start);
+		Calendar start_cal=start;
 		start_cal.set(Calendar.MILLISECOND, 0);
 		
-		Calendar end_cal=new GregorianCalendar();
-		end_cal.setTime(end);
+		Calendar end_cal=end;
 		end_cal.set(Calendar.MILLISECOND, 0);
 		
 		if(start2!=null)
@@ -417,6 +470,35 @@ public class DateUtils {
 		}
 		return   b1 || b2;
 	}
+	
+	/**
+	 * Another utility comparison method.
+	 * @param start Start of the period.
+	 * @param end End of the period.
+	 * @param start2 First Date that is being checked.
+	 * @param end2 Second Date that is being checked.
+	 * @param b Whether start and end dates will be included.
+	 * @return True if the date is within the period false otherwise.
+	 */
+	public static boolean isCalendarBetween(Date start, Date end,
+			Date start2, Date end2, boolean b) {
+		return isCalendarBetween(start, end, DateToString(start2), DateToString(end2), b);
+	}
+	
+	/**
+	 * Another convenience method
+	 * @param start Start of the period.
+	 * @param end End of the period.
+	 * @param start2 First Date that is being checked.
+	 * @param end2 Second Date that is being checked.
+	 * @param b Whether start and end dates will be included.
+	 * @return True if the date is within the period false otherwise.
+	 */
+	public static boolean isCalendarBetween(final Calendar start, final Calendar end,
+			final Calendar start2, final Calendar end2, boolean b) {
+		return isCalendarBetween(start, end, CalendarToString(start2), CalendarToString(end2), b);
+	}
+
 
 	/**
 	 * Converts SQL formatted string to java.util.Date object.
